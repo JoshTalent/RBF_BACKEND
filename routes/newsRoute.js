@@ -50,7 +50,7 @@ router.post("/", upload.single("video"), async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-
+ 
 // ✅ GET all news
 router.get("/", async (req, res) => {
   try {

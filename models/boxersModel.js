@@ -18,7 +18,7 @@ const boxerSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
+ 
 const Boxer = mongoose.model("Boxer", boxerSchema);
 
 export default Boxer;

@@ -23,7 +23,7 @@ const storage = multer.diskStorage({
     cb(null, file.fieldname + "-" + uniqueSuffix + ext);
   },
 });
-
+ 
 const upload = multer({ storage: storage });
 
 // ---------------------- CRUD ROUTES ----------------------

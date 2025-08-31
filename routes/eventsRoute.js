@@ -9,7 +9,7 @@ const router = express.Router();
 router.get("/msg", (req, res) => {
   res.json({ message: "hello world" });
 });
-
+ 
 // --- CREATE EVENT ---
 router.post("/", async (req, res) => {
   try {

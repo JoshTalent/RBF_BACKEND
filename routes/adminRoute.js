@@ -9,7 +9,7 @@ require("dotenv").config();
 router.get("/msg", (req, res) => {
   res.json({ message: "hell world" });
 });
-
+ 
 // Admin registration
 router.post("/register", async (req, res) => {
   try {

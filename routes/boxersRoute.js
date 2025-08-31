@@ -12,7 +12,7 @@ const uploadsDir = path.join(process.cwd(), "uploads", "boxers");
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
-
+ 
 // Multer setup
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
