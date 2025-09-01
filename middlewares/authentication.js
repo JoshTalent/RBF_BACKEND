@@ -1,6 +1,9 @@
-const jwt = require("jsonwebtoken");
-const adminModel = require("../models/adminModel");
-require("dotenv").config();
+import jwt from "jsonwebtoken";
+import adminModel from "../models/adminModel.js";
+import dotenv from "dotenv";
+
+dotenv.config();
+
  
 const authorizeAdmin = async (req, res, next) => {
   try {
@@ -37,4 +40,4 @@ const authorizeAdmin = async (req, res, next) => {
   }
 };
 
-module.exports = authorizeAdmin;
+export default authorizeAdmin;

@@ -1,10 +1,13 @@
-const express = require("express");
-const adminModel = require("../models/adminModel");
+import express from "express";
+import adminModel from "../models/adminModel.js";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import authorizeAdmin from "../middlewares/authentication.js";
+import dotenv from "dotenv";
+
 const router = express.Router();
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const authorizeAdmin = require("../middlewares/authentication");
-require("dotenv").config();
+dotenv.config();
+
 
 router.get("/msg", (req, res) => {
   res.json({ message: "hell world" });
@@ -120,4 +123,4 @@ router.put("/profile",  async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router
