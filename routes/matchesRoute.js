@@ -4,7 +4,6 @@ import Match from "../models/matchesModel.js"; // ES module import
 import multer from "multer";
 import path from "path";
 import fs from "fs";
-import authorizeAdmin from "../middlewares/authentication.js";
 
 const router = express.Router();
 
@@ -30,7 +29,7 @@ const upload = multer({ storage });
 // ---------------- CRUD ROUTES ----------------
 
 // CREATE Match
-router.post("/create",authorizeAdmin , upload.single("video"), async (req, res) => {
+router.post("/create", upload.single("video"), async (req, res) => {
   try {
     console.log("File received:", req.file);
     console.log("Body received:", req.body);
@@ -48,7 +47,7 @@ router.post("/create",authorizeAdmin , upload.single("video"), async (req, res) 
 });
 
 // GET All Matches
-router.get("/",  async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const matches = await Match.find().sort({ createdAt: -1 });
     res.json(matches);
@@ -58,8 +57,9 @@ router.get("/",  async (req, res) => {
 });
 
 
+
 // UPDATE Match
-router.put("/update/:id",authorizeAdmin , upload.single("video"), async (req, res) => {
+router.put("/update/:id", upload.single("video"), async (req, res) => {
   try {
     const { title, description } = req.body;
     const updatedData = { title, description };
@@ -78,7 +78,7 @@ router.put("/update/:id",authorizeAdmin , upload.single("video"), async (req, re
 });
 
 // DELETE Match
-router.delete("/delete/:id",authorizeAdmin ,  async (req, res) => {
+router.delete("/delete/:id", async (req, res) => {
   try {
     const deletedMatch = await Match.findByIdAndDelete(req.params.id);
     if (!deletedMatch) return res.status(404).json({ message: "Match not found" });
