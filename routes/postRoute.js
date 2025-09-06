@@ -3,7 +3,6 @@ import Post from "../models/postModel.js";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
-import authorizeAdmin from "../middlewares/authentication.js";
 
 const router = express.Router();
 
@@ -30,7 +29,7 @@ const upload = multer({ storage: storage });
 // ---------------------- CRUD ROUTES ----------------------
 
 // Create Post
-router.post("/",authorizeAdmin ,  upload.single("image"), async (req, res) => {
+router.post("/", upload.single("image"), async (req, res) => {
   try {
     // console.log("File received:", req.file);
     // console.log("Body received:", req.body);
@@ -48,7 +47,7 @@ router.post("/",authorizeAdmin ,  upload.single("image"), async (req, res) => {
 });
 
 // Get All Posts
-router.get("/",authorizeAdmin ,  async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const posts = await Post.find().sort({ createdAt: -1 });
     res.json(posts);
@@ -58,7 +57,7 @@ router.get("/",authorizeAdmin ,  async (req, res) => {
 });
 
 // Get Single Post
-router.get("/:id",authorizeAdmin ,  async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
     if (!post) return res.status(404).json({ message: "Post not found" });
@@ -69,7 +68,7 @@ router.get("/:id",authorizeAdmin ,  async (req, res) => {
 });
 
 // Update Post
-router.put("/:id",authorizeAdmin ,  upload.single("image"), async (req, res) => {
+router.put("/:id", upload.single("image"), async (req, res) => {
   try {
     const { title, description } = req.body;
     const updatedData = { title, description };
@@ -90,7 +89,7 @@ router.put("/:id",authorizeAdmin ,  upload.single("image"), async (req, res) => 
 });
 
 // Delete Post
-router.delete("/:id",authorizeAdmin ,  async (req, res) => {
+router.delete("/:id", async (req, res) => {
   try {
     const deletedPost = await Post.findByIdAndDelete(req.params.id);
     if (!deletedPost) return res.status(404).json({ message: "Post not found" });

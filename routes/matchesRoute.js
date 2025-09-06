@@ -48,7 +48,7 @@ router.post("/create",authorizeAdmin , upload.single("video"), async (req, res) 
 });
 
 // GET All Matches
-router.get("/",authorizeAdmin ,  async (req, res) => {
+router.get("/",  async (req, res) => {
   try {
     const matches = await Match.find().sort({ createdAt: -1 });
     res.json(matches);
@@ -57,16 +57,6 @@ router.get("/",authorizeAdmin ,  async (req, res) => {
   }
 });
 
-// GET Single Match
-router.get("/:id",authorizeAdmin ,  async (req, res) => {
-  try {
-    const match = await Match.findById(req.params.id);
-    if (!match) return res.status(404).json({ message: "Match not found" });
-    res.json(match);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
 
 // UPDATE Match
 router.put("/update/:id",authorizeAdmin , upload.single("video"), async (req, res) => {

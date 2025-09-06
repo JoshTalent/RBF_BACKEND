@@ -2,6 +2,7 @@ import express from "express";
 import adminModel from "../models/adminModel.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import authorizeAdmin from "../middlewares/authentication.js";
 import dotenv from "dotenv";
 
 const router = express.Router();
