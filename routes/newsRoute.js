@@ -3,6 +3,7 @@ import News from "../models/newsModel.js";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
+import authorizeAdmin from "../middlewares/authentication.js";
 
 const router = express.Router();
 
@@ -37,7 +38,7 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({ storage: storage, fileFilter });
 
 // ✅ CREATE News
-router.post("/", upload.single("video"), async (req, res) => {
+router.post("/",authorizeAdmin ,  upload.single("video"), async (req, res) => {
   try {
     const { title, description, date } = req.body;
     const video = req.file ? `/uploads/news/${req.file.filename}` : null;
@@ -52,7 +53,7 @@ router.post("/", upload.single("video"), async (req, res) => {
 });
  
 // ✅ GET all news
-router.get("/", async (req, res) => {
+router.get("/",authorizeAdmin ,  async (req, res) => {
   try {
     const newsList = await News.find().sort({ createdAt: -1 });
     res.json(newsList);
@@ -62,7 +63,7 @@ router.get("/", async (req, res) => {
 });
 
 // ✅ UPDATE News
-router.put("/update/:id", upload.single("video"), async (req, res) => {
+router.put("/update/:id",authorizeAdmin ,  upload.single("video"), async (req, res) => {
   try {
     const { title, description, date } = req.body;
     const updateData = { title, description, date };
@@ -79,7 +80,7 @@ router.put("/update/:id", upload.single("video"), async (req, res) => {
 });
 
 // ✅ DELETE News
-router.delete("/delete/:id", async (req, res) => {
+router.delete("/delete/:id",authorizeAdmin ,  async (req, res) => {
   try {
     const deleted = await News.findByIdAndDelete(req.params.id);
     if (!deleted) return res.status(404).json({ error: "News not found" });

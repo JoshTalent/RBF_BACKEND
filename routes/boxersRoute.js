@@ -4,6 +4,7 @@ import Boxer from "../models/boxersModel.js";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
+import authorizeAdmin from "../middlewares/authentication.js";
 
 const router = express.Router();
 
@@ -27,13 +28,10 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-// ✅ Test route
-router.get("/msg", (req, res) => {
-  res.json({ message: "Hello world" });
-});
+
 
 // ✅ CREATE boxer
-router.post("/", upload.single("photo"), async (req, res) => {
+router.post("/", authorizeAdmin , upload.single("photo"), async (req, res) => {
   try {
     const {
       name,
@@ -69,7 +67,7 @@ router.post("/", upload.single("photo"), async (req, res) => {
 });
 
 // ✅ GET all boxers
-router.get("/", async (req, res) => {
+router.get("/",authorizeAdmin, async (req, res) => {
   try {
     const boxers = await Boxer.find();
     res.json(boxers);
@@ -79,7 +77,7 @@ router.get("/", async (req, res) => {
 });
 
 // ✅ UPDATE boxer
-router.put("/update/:id", upload.single("photo"), async (req, res) => {
+router.put("/update/:id",authorizeAdmin , upload.single("photo"), async (req, res) => {
   try {
     const { id } = req.params;
     const updateData = { ...req.body };
@@ -98,7 +96,7 @@ router.put("/update/:id", upload.single("photo"), async (req, res) => {
 });
 
 // ✅ DELETE boxer
-router.delete("/:id", async (req, res) => {
+router.delete("/:id",authorizeAdmin ,  async (req, res) => {
   try {
     const { id } = req.params;
     await Boxer.findByIdAndDelete(id);

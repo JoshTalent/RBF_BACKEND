@@ -2,6 +2,7 @@
 import express from "express";
 import Event from "../models/eventsModel.js"; // your Event model
 // import authorizeAdmin from "../middlewares/authentication.js"; // uncomment if you have auth middleware
+import authorizeAdmin from "../middlewares/authentication.js";
 
 const router = express.Router();
 
@@ -11,7 +12,7 @@ router.get("/msg", (req, res) => {
 });
  
 // --- CREATE EVENT ---
-router.post("/", async (req, res) => {
+router.post("/",authorizeAdmin , async (req, res) => {
   try {
     const { title, location, date, description } = req.body;
 
@@ -25,7 +26,7 @@ router.post("/", async (req, res) => {
 });
 
 // --- GET ALL EVENTS ---
-router.get("/", async (req, res) => {
+router.get("/",authorizeAdmin , async (req, res) => {
   try {
     const events = await Event.find().sort({ createdAt: -1 });
     res.json(events);
@@ -35,7 +36,7 @@ router.get("/", async (req, res) => {
 });
 
 // --- GET SINGLE EVENT BY ID ---
-router.get("/:id", async (req, res) => {
+router.get("/:id",authorizeAdmin ,  async (req, res) => {
   try {
     const event = await Event.findById(req.params.id);
     if (!event) return res.status(404).json({ error: "Event not found" });
@@ -46,7 +47,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // --- UPDATE EVENT ---
-router.put("/:id", async (req, res) => {
+router.put("/:id",authorizeAdmin ,  async (req, res) => {
   try {
     const { title, location, date, description } = req.body;
 
@@ -65,7 +66,7 @@ router.put("/:id", async (req, res) => {
 });
 
 // --- DELETE EVENT ---
-router.delete("/:id", async (req, res) => {
+router.delete("/:id",authorizeAdmin , async (req, res) => {
   try {
     const deletedEvent = await Event.findByIdAndDelete(req.params.id);
     if (!deletedEvent) return res.status(404).json({ error: "Event not found" });
