@@ -1,19 +1,19 @@
-// routes/newsRoute.js
 import express from "express";
 import News from "../models/newsModel.js";
 
 const router = express.Router();
 
-// ✅ CREATE News (accepts video link instead of file upload)
+// ✅ CREATE News (uses videoUrl and thumbnail links)
 router.post("/", async (req, res) => {
   try {
-    const { title, description, date, video } = req.body; // video is just a URL/link
+    const { title, thumbnail, videoUrl, description, date } = req.body;
 
     const newNews = new News({
       title,
+      thumbnail,
+      videoUrl,
       description,
-      date,
-      video, // e.g. Cloudinary, YouTube, or other hosted video URL
+      date: date || Date.now(),
     });
 
     await newNews.save();
@@ -26,7 +26,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-// ✅ GET all news
+// ✅ GET all News
 router.get("/", async (req, res) => {
   try {
     const newsList = await News.find().sort({ createdAt: -1 });
@@ -36,7 +36,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// ✅ GET single news by ID
+// ✅ GET single News by ID
 router.get("/:id", async (req, res) => {
   try {
     const newsItem = await News.findById(req.params.id);
@@ -47,14 +47,14 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-// ✅ UPDATE News (video can be replaced with new link)
+// ✅ UPDATE News (videoUrl and thumbnail can be updated)
 router.put("/update/:id", async (req, res) => {
   try {
-    const { title, description, date, video } = req.body;
+    const { title, thumbnail, videoUrl, description, date, views, likes } = req.body;
 
     const updatedNews = await News.findByIdAndUpdate(
       req.params.id,
-      { title, description, date, video },
+      { title, thumbnail, videoUrl, description, date, views, likes },
       { new: true }
     );
 

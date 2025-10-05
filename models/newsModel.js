@@ -1,12 +1,41 @@
 import mongoose from "mongoose";
 
-const newsSchema = new mongoose.Schema({
-  title: { type: String, required: true, trim: true },
-  date: { type: Date, required: true },
-  description: { type: String, required: true, trim: true },
-  video: { type: String, default: null },
-}, { timestamps: true });
+const NewsSchema = new mongoose.Schema(
+  {
+    title: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    thumbnail: {
+      type: String,
+      required: true,
+      trim: true, // e.g. external URL from Unsplash or Cloudinary
+    },
+    videoUrl: {
+      type: String,
+      required: true,
+      trim: true, // e.g. YouTube embed link
+    },
+    date: {
+      type: Date,
+      default: Date.now,
+    },
+    views: {
+      type: Number,
+      default: 0,
+    },
+    likes: {
+      type: Number,
+      default: 0,
+    },
+    description: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+  },
+  { timestamps: true }
+);
 
-const News = mongoose.model("News", newsSchema);
-export default News; // ✅ ES module
- 
+export default mongoose.model("News", NewsSchema);
