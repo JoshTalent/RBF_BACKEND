@@ -1,39 +1,16 @@
 // routes/boxersRoute.js
 import express from "express";
 import Boxer from "../models/boxersModel.js";
-import multer from "multer";
-import path from "path";
-import fs from "fs";
 
 const router = express.Router();
-
-// Create uploads/boxers folder if it doesn't exist
-const uploadsDir = path.join(process.cwd(), "uploads", "boxers");
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
-}
- 
-// Multer setup
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, uploadsDir);
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    const ext = path.extname(file.originalname);
-    cb(null, file.fieldname + "-" + uniqueSuffix + ext);
-  },
-});
-
-const upload = multer({ storage });
 
 // ✅ Test route
 router.get("/msg", (req, res) => {
   res.json({ message: "Hello world" });
 });
 
-// ✅ CREATE boxer
-router.post("/", upload.single("photo"), async (req, res) => {
+// ✅ CREATE boxer (now accepts image link instead of file upload)
+router.post("/", async (req, res) => {
   try {
     const {
       name,
@@ -42,11 +19,11 @@ router.post("/", upload.single("photo"), async (req, res) => {
       lostMatches,
       draw,
       kaos,
+      photo, // <-- now comes as a link
       instagram,
       facebook,
       twitter,
     } = req.body;
-    const photo = req.file ? `/uploads/boxers/${req.file.filename}` : null;
 
     const newBoxer = new Boxer({
       name,
@@ -55,14 +32,12 @@ router.post("/", upload.single("photo"), async (req, res) => {
       lostMatches: lostMatches || 0,
       draw: draw || 0,
       kaos: kaos || 0,
-      photo,
+      photo, // <-- just store the link
       socialMedia: { instagram, facebook, twitter },
     });
 
     await newBoxer.save();
-    res
-      .status(201)
-      .json({ message: "Boxer created successfully", boxer: newBoxer });
+    res.status(201).json({ message: "Boxer created successfully", boxer: newBoxer });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -79,19 +54,35 @@ router.get("/", async (req, res) => {
 });
 
 // ✅ UPDATE boxer
-router.put("/update/:id", upload.single("photo"), async (req, res) => {
+router.put("/update/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const updateData = { ...req.body };
+    const {
+      name,
+      description,
+      winningMatches,
+      lostMatches,
+      draw,
+      kaos,
+      photo, // still a link
+      instagram,
+      facebook,
+      twitter,
+    } = req.body;
 
-    if (req.file) {
-      updateData.photo = `/uploads/boxers/${req.file.filename}`;
-    }
+    const updateData = {
+      name,
+      description,
+      winningMatches,
+      lostMatches,
+      draw,
+      kaos,
+      photo, // keep or change the link
+      socialMedia: { instagram, facebook, twitter },
+    };
 
-    const updatedBoxer = await Boxer.findByIdAndUpdate(id, updateData, {
-      new: true,
-    });
-    res.json({ message: "Boxer updated", boxer: updatedBoxer });
+    const updatedBoxer = await Boxer.findByIdAndUpdate(id, updateData, { new: true });
+    res.json({ message: "Boxer updated successfully", boxer: updatedBoxer });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -102,7 +93,7 @@ router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
     await Boxer.findByIdAndDelete(id);
-    res.json({ message: "Boxer deleted" });
+    res.json({ message: "Boxer deleted successfully" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
