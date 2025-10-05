@@ -1,24 +1,58 @@
 // models/Boxer.js
 import mongoose from "mongoose";
 
-const boxerSchema = new mongoose.Schema(
+const BoxerSchema = new mongoose.Schema(
   {
-    name: { type: String, required: true, trim: true },
-    photo: { type: String, default: null }, // URL/path
-    description: { type: String, trim: true },
-    winningMatches: { type: Number, default: 0 },
-    lostMatches: { type: Number, default: 0 },
-    draw: { type: Number, default: 0 },
-    kaos: { type: Number, default: 0 },
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    image: {
+      type: String, // Can store an external link (e.g., Imgur, Cloudinary) or local path
+      default: "",
+    },
+    record: {
+      type: String, // e.g., "20W - 2L - 1D"
+      default: "",
+    },
+    wins: {
+      type: Number,
+      default: 0,
+    },
+    kos: {
+      type: Number,
+      default: 0,
+    },
+    losses: {
+      type: Number,
+      default: 0,
+    },
+    bio: {
+      type: String,
+      default: "",
+    },
+    manager: {
+      name: {
+        type: String,
+        default: "",
+      },
+      email: {
+        type: String,
+        default: "",
+      },
+      phone: {
+        type: String,
+        default: "",
+      },
+    },
     socialMedia: {
-      instagram: { type: String, default: null },
-      facebook: { type: String, default: null },
-      twitter: { type: String, default: null },
+      instagram: { type: String, default: "" },
+      facebook: { type: String, default: "" },
+      twitter: { type: String, default: "" },
     },
   },
   { timestamps: true }
 );
- 
-const Boxer = mongoose.model("Boxer", boxerSchema);
 
-export default Boxer;
+export default mongoose.model("Boxer", BoxerSchema);

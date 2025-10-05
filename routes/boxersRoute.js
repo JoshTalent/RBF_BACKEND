@@ -6,20 +6,21 @@ const router = express.Router();
 
 // ✅ Test route
 router.get("/msg", (req, res) => {
-  res.json({ message: "Hello world" });
+  res.json({ message: "Boxer API working ✅" });
 });
 
-// ✅ CREATE boxer (now accepts image link instead of file upload)
+// ✅ CREATE a new boxer
 router.post("/", async (req, res) => {
   try {
     const {
       name,
-      description,
-      winningMatches,
-      lostMatches,
-      draw,
-      kaos,
-      photo, // <-- now comes as a link
+      image, // supports image URL
+      record,
+      wins,
+      kos,
+      losses,
+      bio,
+      manager,
       instagram,
       facebook,
       twitter,
@@ -27,18 +28,28 @@ router.post("/", async (req, res) => {
 
     const newBoxer = new Boxer({
       name,
-      description,
-      winningMatches: winningMatches || 0,
-      lostMatches: lostMatches || 0,
-      draw: draw || 0,
-      kaos: kaos || 0,
-      photo, // <-- just store the link
-      socialMedia: { instagram, facebook, twitter },
+      image,
+      record,
+      wins: wins || 0,
+      kos: kos || 0,
+      losses: losses || 0,
+      bio,
+      manager: {
+        name: manager?.name || "",
+        email: manager?.email || "",
+        phone: manager?.phone || "",
+      },
+      socialMedia: {
+        instagram: instagram || "",
+        facebook: facebook || "",
+        twitter: twitter || "",
+      },
     });
 
     await newBoxer.save();
-    res.status(201).json({ message: "Boxer created successfully", boxer: newBoxer });
+    res.status(201).json({ message: "✅ Boxer created successfully", boxer: newBoxer });
   } catch (error) {
+    console.error("Error creating boxer:", error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -53,18 +64,29 @@ router.get("/", async (req, res) => {
   }
 });
 
-// ✅ UPDATE boxer
-router.put("/update/:id", async (req, res) => {
+// ✅ GET a single boxer by ID
+router.get("/:id", async (req, res) => {
   try {
-    const { id } = req.params;
+    const boxer = await Boxer.findById(req.params.id);
+    if (!boxer) return res.status(404).json({ message: "Boxer not found" });
+    res.json(boxer);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ✅ UPDATE boxer
+router.put("/:id", async (req, res) => {
+  try {
     const {
       name,
-      description,
-      winningMatches,
-      lostMatches,
-      draw,
-      kaos,
-      photo, // still a link
+      image,
+      record,
+      wins,
+      kos,
+      losses,
+      bio,
+      manager,
       instagram,
       facebook,
       twitter,
@@ -72,17 +94,32 @@ router.put("/update/:id", async (req, res) => {
 
     const updateData = {
       name,
-      description,
-      winningMatches,
-      lostMatches,
-      draw,
-      kaos,
-      photo, // keep or change the link
-      socialMedia: { instagram, facebook, twitter },
+      image,
+      record,
+      wins,
+      kos,
+      losses,
+      bio,
+      manager: {
+        name: manager?.name || "",
+        email: manager?.email || "",
+        phone: manager?.phone || "",
+      },
+      socialMedia: {
+        instagram: instagram || "",
+        facebook: facebook || "",
+        twitter: twitter || "",
+      },
     };
 
-    const updatedBoxer = await Boxer.findByIdAndUpdate(id, updateData, { new: true });
-    res.json({ message: "Boxer updated successfully", boxer: updatedBoxer });
+    const updatedBoxer = await Boxer.findByIdAndUpdate(req.params.id, updateData, {
+      new: true,
+    });
+
+    if (!updatedBoxer)
+      return res.status(404).json({ message: "Boxer not found" });
+
+    res.json({ message: "✅ Boxer updated successfully", boxer: updatedBoxer });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -91,9 +128,10 @@ router.put("/update/:id", async (req, res) => {
 // ✅ DELETE boxer
 router.delete("/:id", async (req, res) => {
   try {
-    const { id } = req.params;
-    await Boxer.findByIdAndDelete(id);
-    res.json({ message: "Boxer deleted successfully" });
+    const deleted = await Boxer.findByIdAndDelete(req.params.id);
+    if (!deleted) return res.status(404).json({ message: "Boxer not found" });
+
+    res.json({ message: "🗑️ Boxer deleted successfully" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
