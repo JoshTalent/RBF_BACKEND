@@ -23,7 +23,7 @@ import boxersRoute from "./routes/boxersRoute.js";
 import newsRoute from "./routes/newsRoute.js";
 import eventsRoute from "./routes/eventsRoute.js";
 import postRoute from "./routes/postRoute.js";
-import matchesRoute from "./routes/matchesRoute.js";
+import matchesRoute from "./routes/matchRoute.js";
 import projectRoutes from "./routes/projectRoutes.js";
 import judgeRoutes from "./routes/judgeRoutes.js";
 import excomeRoutes from "./routes/excomeRoutes.js";

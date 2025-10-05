@@ -1,6 +1,6 @@
 // routes/matchesRoute.js
 import express from "express";
-import Match from "../models/matchesModel.js";
+import Match from "../models/matchModel.js";
 
 const router = express.Router();
 
