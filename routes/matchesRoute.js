@@ -1,68 +1,84 @@
+// routes/matchesRoute.js
 import express from "express";
-import Match from "../models/matchModel.js"; // make sure you have a Match schema
+import Match from "../models/matchesModel.js";
+
 const router = express.Router();
 
-// GET all matches
+// ---------------- CRUD ROUTES ----------------
+
+// ✅ CREATE Match (video URL only)
+router.post("/create", async (req, res) => {
+  try {
+    const { title, description, video } = req.body; // video is a URL (e.g., Cloudinary link)
+
+    const newMatch = new Match({
+      title,
+      description,
+      video, // store the URL
+    });
+
+    await newMatch.save();
+    res.status(201).json({
+      message: "Match created successfully",
+      match: newMatch,
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ✅ GET All Matches
 router.get("/", async (req, res) => {
   try {
     const matches = await Match.find().sort({ createdAt: -1 });
     res.json(matches);
-  } catch (err) {
-    res.status(500).json({ error: "Failed to fetch matches" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 
-// CREATE new match
-router.post("/create", async (req, res) => {
+// ✅ GET Single Match
+router.get("/:id", async (req, res) => {
   try {
-    const { title, description, video } = req.body;
-
-    if (!title || !description) {
-      return res.status(400).json({ error: "Title and description are required" });
-    }
-
-    // Validate video: must be either a URL or empty
-    const newMatch = new Match({ title, description, video: video || null });
-    const savedMatch = await newMatch.save();
-
-    res.json({ match: savedMatch });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to create match" });
+    const match = await Match.findById(req.params.id);
+    if (!match) return res.status(404).json({ message: "Match not found" });
+    res.json(match);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 
-// UPDATE match
+// ✅ UPDATE Match (video URL can be replaced)
 router.put("/update/:id", async (req, res) => {
   try {
     const { title, description, video } = req.body;
 
-    const match = await Match.findById(req.params.id);
-    if (!match) return res.status(404).json({ error: "Match not found" });
+    const updatedMatch = await Match.findByIdAndUpdate(
+      req.params.id,
+      { title, description, video },
+      { new: true }
+    );
 
-    match.title = title || match.title;
-    match.description = description || match.description;
-    match.video = video || match.video;
+    if (!updatedMatch) return res.status(404).json({ message: "Match not found" });
 
-    const updatedMatch = await match.save();
-    res.json({ match: updatedMatch });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to update match" });
+    res.json({
+      message: "Match updated successfully",
+      match: updatedMatch,
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 
-// DELETE match
+// ✅ DELETE Match
 router.delete("/delete/:id", async (req, res) => {
   try {
-    const match = await Match.findById(req.params.id);
-    if (!match) return res.status(404).json({ error: "Match not found" });
+    const deletedMatch = await Match.findByIdAndDelete(req.params.id);
+    if (!deletedMatch) return res.status(404).json({ message: "Match not found" });
 
-    await match.remove();
-    res.json({ message: "Match deleted" });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to delete match" });
+    res.json({ message: "Match deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 
