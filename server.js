@@ -28,6 +28,7 @@ import projectRoutes from "./routes/projectRoutes.js";
 import judgeRoutes from "./routes/judgeRoutes.js";
 import excomeRoutes from "./routes/excomeRoutes.js";
 import clubRoutes from "./routes/clubRoutes.js";
+import messageRoutes from "./routes/messageRoute.js"
 
 // Route usage
 app.use("/admin", adminRoute);
@@ -40,6 +41,7 @@ app.use("/project", projectRoutes);
 app.use("/judge", judgeRoutes);
 app.use("/excome", excomeRoutes);
 app.use("/club", clubRoutes);
+app.use("/message", messageRoutes);
 
 // Default route
 app.get("/", (req, res) => {
